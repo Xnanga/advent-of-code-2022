@@ -1,0 +1,21 @@
+*.class
+*.log
+*.iml
+.DS_Store
+.history
+
+target
+
+# ide things
+.bsp
+.idea
+.worksheet
+.metals
+
+# sbt things
+.cache
+.lib/
+dist/*
+target/
+lib_managed/
+src_managed/
