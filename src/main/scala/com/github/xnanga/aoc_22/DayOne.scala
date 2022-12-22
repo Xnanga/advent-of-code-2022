@@ -1,4 +1,4 @@
-package com.github.xnanga.aoc_22.day_one
+package com.github.xnanga.aoc_22
 
 import scala.collection.mutable.ListBuffer
 import scala.io.Source.fromFile
