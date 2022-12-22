@@ -17,11 +17,11 @@ object DayTwo extends App {
 
   private val allParsedInputs = allInputs.toList.map(input => parseInput(input))
 
-  private def determineChoice(letter: Char): String = {
+  private def determineOpponentChoice(letter: Char): String = {
     letter match {
-      case ('A' | 'X') => "rock"
-      case ('B' | 'Y') => "paper"
-      case ('C' | 'Z') => "scissors"
+      case 'A' => "rock"
+      case 'B'=> "paper"
+      case 'C' => "scissors"
       case _ => ""
     }
   }
@@ -35,45 +35,60 @@ object DayTwo extends App {
     }
   }
 
-  private def determineWinner(playerOneChoice: String, playerTwoChoice: String): String = {
-    if (playerOneChoice == playerTwoChoice) {
-      "draw"
-    } else if (playerOneChoice == "rock") {
-      if (playerTwoChoice == "paper") {
-        "playerTwo"
-      } else {
-        "playerOne"
+  private def determinePlayerChoice(opponentChoice: String, winner: String): String = {
+    if (winner == "draw") {
+      opponentChoice
+    } else if (winner == "player") {
+      opponentChoice match {
+        case ("rock") => "paper"
+        case ("paper") => "scissors"
+        case ("scissors") => "rock"
       }
-    } else if (playerOneChoice == "paper") {
-      if (playerTwoChoice == "scissors") {
-        "playerTwo"
-      } else {
-        "playerOne"
-      }
-    } else if (playerOneChoice == "scissors") {
-      if (playerTwoChoice == "rock") {
-        "playerTwo"
-      } else {
-        "playerOne"
+    } else if (winner == "opponent") {
+      opponentChoice match {
+        case ("rock") => "scissors"
+        case ("paper") => "rock"
+        case ("scissors") => "paper"
       }
     } else {
-      "error with input(s)"
+      "Error(s) with input"
     }
   }
 
-  private def calculateScores(inputList: List[Char]): List[Int] = {
-    val playerOneChoice = determineChoice(inputList(0))
-    val playerOneChoicePoints = determineChoicePoints(playerOneChoice)
-    val playerTwoChoice = determineChoice(inputList(1))
-    val playerTwoChoicePoints = determineChoicePoints(playerTwoChoice)
-    val matchOutcome = determineWinner(playerOneChoice, playerTwoChoice)
+  private def determineGameOutcome(letter: Char): String = {
+    letter match {
+      case 'X' => "lose"
+      case 'Y' => "draw"
+      case 'Z' => "win"
+      case _ => ""
+    }
+  }
+
+  private def determineWinner(gameOutcome: String): String = {
+    gameOutcome match {
+      case "draw" => "draw"
+      case "win" => "player"
+      case "lose" => "opponent"
+      case _ => "Error(s) with input(s)"
+    }
+  }
+
+  private def calculateScores(inputAndOutcomeList: List[Char]): List[Int] = {
+    val opponentChoice = determineOpponentChoice(inputAndOutcomeList(0))
+    val opponentChoicePoints = determineChoicePoints(opponentChoice)
+
+    val decidedOutcome = determineGameOutcome(inputAndOutcomeList(1))
+    val matchOutcome = determineWinner(decidedOutcome)
+
+    val playerChoice = determinePlayerChoice(opponentChoice, matchOutcome)
+    val playerChoicePoints = determineChoicePoints(playerChoice)
 
     if (matchOutcome == "draw") {
-      List(playerOneChoicePoints + DRAW_POINTS, playerTwoChoicePoints + DRAW_POINTS)
-    } else if (matchOutcome == "playerOne") {
-      List(playerOneChoicePoints + WINNING_POINTS, playerTwoChoicePoints + LOSING_POINTS)
-    } else if (matchOutcome == "playerTwo") {
-      List(playerOneChoicePoints + LOSING_POINTS, playerTwoChoicePoints + WINNING_POINTS)
+      List(playerChoicePoints + DRAW_POINTS, opponentChoicePoints + DRAW_POINTS)
+    } else if (matchOutcome == "player") {
+      List(playerChoicePoints + WINNING_POINTS, opponentChoicePoints)
+    } else if (matchOutcome == "opponent") {
+      List(playerChoicePoints, opponentChoicePoints + WINNING_POINTS)
     } else {
       println("Error(s) with score inputs")
       List(0, 0)
@@ -81,18 +96,18 @@ object DayTwo extends App {
   }
 
   private def runStrategyGuide(inputList: List[List[Char]]): HashMap[String, Int] = {
-    var playerOneTotalScore = 0
-    var playerTwoTotalScore = 0
+    var playerTotalScore = 0
+    var opponentTotalScore = 0
 
     inputList.foreach(input => {
       val outcomeScores = calculateScores(input)
-      playerOneTotalScore += outcomeScores(0)
-      playerTwoTotalScore += outcomeScores(1)
+      playerTotalScore += outcomeScores(0)
+      opponentTotalScore += outcomeScores(1)
     })
 
-    HashMap("playerOneScore" -> playerOneTotalScore, "playerTwoScore" -> playerTwoTotalScore)
+    HashMap("playerTotalScore" -> playerTotalScore, "opponentTotalScore" -> opponentTotalScore)
   }
 
   private val finalCalculatedScores = runStrategyGuide(allParsedInputs)
-  println(s"PlayerOneScore: ${finalCalculatedScores("playerOneScore")}\nPlayerTwoScore: ${finalCalculatedScores("playerTwoScore")}")
+  println(s"Player Total Score: ${finalCalculatedScores("playerTotalScore")}\nOpponent Total Score: ${finalCalculatedScores("opponentTotalScore")}")
 }
