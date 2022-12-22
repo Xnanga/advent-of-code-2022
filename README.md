@@ -7,8 +7,8 @@ I decided to tackle the challenges in Scala to practice using the language - whi
 ## Challenges so far...
 
 - December 1  | :star: :star:
-- December 2  |
-- December 3  |
+- December 2  | :star: :star:
+- December 3  | :star:
 - December 4  |
 - December 5  |
 - December 6  |
